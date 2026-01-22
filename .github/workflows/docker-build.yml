@@ -53,6 +53,6 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ secrets.GHCR_USERNAME }}/bitmappery:${{ steps.version.outputs.tag }}
-            ghcr.io/${{ secrets.version.outputs.tag }}/bitmappery:latest
+            ghcr.io/${{ github.actor }}/bitmappery:${{ steps.version.outputs.tag }}
+            ghcr.io/${{ github.actor }}/bitmappery:latest
 
