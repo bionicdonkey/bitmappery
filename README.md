@@ -142,6 +142,23 @@ The above will suffice when working solely on the JavaScript side of things.
 
 ## Docker based self hosted version
 
+This fork provides an automated Docker image build that is published to the GitHub Container Registry. You can pull the prebuilt image instead of building locally:
+
+```bash
+docker pull ghcr.io/bionicdonkey/bitmappery:latest
+```
+
+A `docker-compose.yaml` is also included in this repository for convenience. The compose file maps the host port `5173` to the container port `80` by default. To run using compose:
+
+```bash
+# using the Docker CLI v2 (recommended)
+docker compose up -d
+# or with the legacy docker-compose tool
+docker-compose up -d
+```
+
+If you prefer to build the image locally, follow these steps:
+
 #### Step 1 : Clone the BitMappery project into a local folder :
 
 ```bash
@@ -154,10 +171,18 @@ git clone https://github.com/igorski/bitmappery.git
 docker build -t bitmappery .
 ```
 
-#### Step 3 : Once the image is built, run the container and bind the ports :
+Alternatively, pull the prebuilt image from GHCR as shown above.
+
+#### Step 3 : Once the image is built (or pulled), run the container and bind the ports :
 
 ```bash
-docker run -d -p 5173:5173 --name bitmappery-container bitmappery
+# if the image listens on port 5173 inside the container (development mode)
+# map host 5173 to container 5173
+docker run -d -p 5173:80 --name bitmappery-container bitmappery
+
+# if using the prebuilt GHCR image or a production container that serves on port 80
+# map host 5173 to container 80
+docker run -d -p 5173:80 --name bitmappery-container ghcr.io/bionicdonkey/bitmappery:latest
 ```
 
 Once the container is started, you can access BitMappery at `http://localhost:5173`
