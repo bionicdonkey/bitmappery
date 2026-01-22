@@ -12,16 +12,11 @@ COPY . .
 RUN npm run build
 
 # ---------- Runtime Stage ----------
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
-
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/server ./server
-COPY --from=builder /app/package*.json ./
-
-RUN npm install --production
+# Copy built static files
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 5173
 
-CMD ["node", "server/index.js"]
+CMD ["nginx", "-g", "daemon off;"]
