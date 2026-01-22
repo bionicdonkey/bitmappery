@@ -1,24 +1,27 @@
-# Written by Ange Cesari
-# Use official Node.js based on Alpine
-FROM node:20-alpine
+# ---------- Build Stage ----------
+FROM node:20-alpine AS builder
 
-# Install Yarn
-RUN apk add --no-cache yarn
+WORKDIR /app
 
-# Create dir for application
-WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
 
-# Copy package.json
-COPY package.json ./
-
-# Install dependencies
-RUN yarn install
-
-# Copy the rest of the application code
 COPY . .
 
-# Expose the port the application will run on
+# Build Vite frontend
+RUN npm run build
+
+# ---------- Runtime Stage ----------
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server ./server
+COPY --from=builder /app/package*.json ./
+
+RUN npm install --production
+
 EXPOSE 5173
 
-# Run the application
-CMD ["yarn", "dev", "--host", "0.0.0.0"]
+CMD ["node", "server/index.js"]
