@@ -1,0 +1,7 @@
+services:
+  bitmappery:
+    image: ghcr.io/bionicdonkey/bitmappery:latest
+    container_name: bitmappery
+    ports:
+      - "5173:5173"
+    restart: unless-stopped

@@ -1,0 +1,24 @@
+name: Auto Tag on Upstream Release
+
+on:
+  workflow_run:
+    workflows: ["Sync Fork with Upstream"]
+    types:
+      - completed
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect upstream tags
+        run: |
+          git fetch --tags
+          latest=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Create tag
+        run: |
+          git tag ${{ steps.detect.outputs.latest }}
+          git push origin ${{ steps.detect.outputs.latest }}
